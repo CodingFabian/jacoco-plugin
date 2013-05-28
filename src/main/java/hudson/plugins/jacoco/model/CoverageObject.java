@@ -292,37 +292,20 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
 		String percent = percentFormat.format(ratio.getPercentageFloat());
 		String numerator = intFormat.format(ratio.getMissed());
 		String denominator = intFormat.format(ratio.getCovered());
-		int maximumCovered = 2;
-		int maximumMissed=2;
-		if (ratio.getType().equals(CoverageElement.Type.INSTRUCTION)) {
-			maximumCovered = getParent().maxCoveredInstruction;
-			maximumMissed = getParent().maxMissedInstruction;
-		} else if (ratio.getType().equals(CoverageElement.Type.BRANCH)) {
-			maximumCovered = getParent().maxCoveredBranch;
-			maximumMissed = getParent().maxMissedBranch;
-		} else if (ratio.getType().equals(CoverageElement.Type.COMPLEXITY)) {
-			maximumCovered = getParent().maxCoveredComplexity;
-			maximumMissed = getParent().maxMissedComplexity;
-		} else if (ratio.getType().equals(CoverageElement.Type.LINE)) {
-			maximumCovered = getParent().maxCoveredLine;
-			maximumMissed = getParent().maxMissedLine;
-		} else if (ratio.getType().equals(CoverageElement.Type.METHOD)) {
-			maximumCovered = getParent().maxCoveredMethod;
-			maximumMissed = getParent().maxMissedMethod;
-		} else if (ratio.getType().equals(CoverageElement.Type.CLASS)) {
-			maximumCovered = getParent().maxCoveredClazz;
-			maximumMissed = getParent().maxMissedClazz;
-		}
-		buf.append("<table class='percentgraph' cellpadding='0px' cellspacing='0px'>")
-		.append("<tr>" +
-				"<td class='percentgraph'>").append("<span class='text'>").append("<b>M:</b> "+numerator).append(" ").append("<b>C:</b> "+ denominator).append("</span></td></tr>")
-		.append("<tr>")
-		    .append("<td width='40px' class='data'>").append(ratio.getPercentage()).append("%</td>")	
-		    .append("<td>")
-		    .append("<div class='percentgraph' style='width: ").append(((float)ratio.getCovered()/(float)maximumCovered)*100).append("px;'>")
-		    .append("<div class='redbar' style='width: ").append(ratio.getMissed()> ratio.getCovered() ? ((float)ratio.getMissed()/(float)maximumMissed)*100: ((float)ratio.getMissed()/(float)maximumCovered)*100).append("px;'>")
-		    .append("</td></tr>")
-		    .append("</table>");
+		buf.append(
+			"<table class='percentgraph' cellpadding='0px' cellspacing='0px'><tr class='percentgraph'>")
+			.append("<td style='width:40px' class='data'>")
+			.append(ratio.getPercentage())
+			.append("%</td>")
+			.append("<td class='percentgraph'>")
+			.append("<div class='percentgraph' style='width: 100px;'>")
+			.append("<div class='redbar' style='width: ")
+			.append((ratio.getMissed() + ratio.getCovered()) == 0 ? 0 : 100
+				* (float) ratio.getMissed()
+				/ ((float) ratio.getMissed() + (float) ratio.getCovered())).append("px;'>")
+			.append("</div></div></td></tr><tr><td colspan='2'>")
+			.append("<span class='text'><b>M:</b> ").append(numerator).append(" <b>C:</b> ")
+			.append(denominator).append("</span></td></tr></table>");
 	}
 	
 	protected <ReportLevel extends AggregatedReport > void setAllCovTypes( ReportLevel reportToSet, ICoverageNode covReport) {
